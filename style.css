@@ -1,0 +1,47 @@
+:root {
+    --bg-color: #e0e5ec;
+    --text-main: #2d3748;
+    --text-muted: #718096;
+    --accent: #DB5227;
+    
+    /* Sombras Neumórficas */
+    --neo-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5);
+    --neo-shadow-hover: 12px 12px 20px rgb(163,177,198,0.7), -12px -12px 20px rgba(255,255,255, 0.6);
+    --neo-inset: inset 6px 6px 10px 0 rgba(163,177,198, 0.7), inset -6px -6px 10px 0 rgba(255,255,255, 0.8);
+}
+
+body { background-color: var(--bg-color); font-family: 'Inter', sans-serif; color: var(--text-main); }
+
+/* Neumorfismo Base */
+.neo-box { background-color: var(--bg-color); border-radius: 24px; box-shadow: var(--neo-shadow); border: 1px solid rgba(255,255,255,0.2); }
+.neo-btn { background-color: var(--bg-color); border-radius: 16px; box-shadow: var(--neo-shadow); color: var(--text-main); font-weight: 800; transition: all 0.2s ease-in-out; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; }
+.neo-btn:hover { box-shadow: var(--neo-shadow-hover); transform: translateY(-2px); }
+.neo-btn:active { box-shadow: var(--neo-inset); transform: translateY(0); }
+.neo-btn-accent { background-color: var(--text-main); color: white; box-shadow: 0 10px 20px rgba(10, 12, 18, 0.2); }
+.neo-btn-accent:hover { background-color: var(--accent); }
+
+/* Inputs afundados */
+.neo-input { background-color: var(--bg-color); border-radius: 16px; box-shadow: var(--neo-inset); border: none; padding: 16px; width: 100%; outline: none; color: var(--text-main); font-weight: 600; transition: 0.2s; }
+
+/* Card e Coração Minimalista */
+.card-role { background-color: var(--bg-color); border-radius: 32px; box-shadow: var(--neo-shadow); overflow: hidden; position: relative; transition: 0.3s; padding-bottom: 16px; cursor: pointer;}
+.card-role img { border-radius: 32px 32px 0 0; }
+
+.like-btn { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.4); backdrop-filter: blur(10px); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; transition: 0.3s; z-index: 10; border: 1px solid rgba(255,255,255,0.5); color: #2d3748; }
+.like-btn:hover { transform: scale(1.1); }
+.like-btn svg { width: 22px; height: 22px; transition: 0.2s; }
+.like-btn .icon-filled { display: none; }
+.like-btn .icon-outline { display: block; }
+
+/* Quando curtido, troca o SVG vazio pelo cheio e fica vermelho */
+.like-btn.liked { color: #ff3040; background: rgba(255,255,255,0.9); }
+.like-btn.liked .icon-filled { display: block; fill: #ff3040; }
+.like-btn.liked .icon-outline { display: none; }
+
+.like-count { position: absolute; top: 68px; right: 16px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); color: white; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px; }
+
+.modal-overlay { background: rgba(224, 229, 236, 0.85); backdrop-filter: blur(12px); }
+
+/* Ícones de Compartilhamento Redondos */
+.share-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+.share-btn svg { width: 20px; height: 20px; fill: currentColor; }

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divulgue seu Rolê - Role Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#e0e5ec] text-[#2d3748] min-h-screen flex items-center justify-center p-6 font-['Inter']">
+
+    <div class="neo-box w-full max-w-4xl p-0 flex flex-col md:flex-row overflow-hidden">
+        
+        <div class="bg-[#2d3748] text-white p-10 md:w-1/2 flex flex-col justify-center">
+            <h1 class="text-4xl font-black mb-4">Alcance mais pessoas no seu evento.</h1>
+            <p class="text-gray-400 mb-8 font-medium">Cadastre seu CNPJ e tenha acesso a um painel exclusivo para gerenciar seus ingressos, ver quem se interessou e analisar métricas de compartilhamento em tempo real.</p>
+            <ul class="space-y-4 font-bold text-sm">
+                <li class="flex items-center gap-3">✅ <span class="text-gray-300">Totalmente Gratuito</span></li>
+                <li class="flex items-center gap-3">✅ <span class="text-gray-300">Preenchimento automático via Receita Federal</span></li>
+                <li class="flex items-center gap-3">✅ <span class="text-gray-300">Relatório de likes e compartilhamentos</span></li>
+            </ul>
+        </div>
+
+        <div class="p-10 md:w-1/2">
+            <h2 class="text-2xl font-black mb-6 text-[#DB5227]">Criar Conta</h2>
+            <form id="formParceiro" class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-500 mb-2 block">CNPJ</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="pCnpj" placeholder="Apenas números" class="neo-input" required>
+                        <button type="button" onclick="buscarCNPJ()" class="neo-btn px-6 font-black text-sm">Validar</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-500 mb-2 block">Nome Fantasia / Empresa</label>
+                    <input type="text" id="pNome" placeholder="Automático após validar o CNPJ" class="neo-input" readonly>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-500 mb-2 block">E-mail de Acesso</label>
+                    <input type="email" id="pEmail" placeholder="contato@empresa.com" class="neo-input" required>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-500 mb-2 block">Crie uma Senha</label>
+                    <input type="password" id="pSenha" placeholder="••••••••" class="neo-input" required>
+                </div>
+
+                <button type="submit" class="neo-btn neo-btn-accent w-full py-4 text-lg mt-4">Concluir Cadastro</button>
+            </form>
+            
+            <div class="mt-6 flex flex-col gap-2 text-center">
+                <a href="dashboard-parceiro.html" class="text-xs font-bold text-[#DB5227] hover:underline">Já possui conta? Faça Login</a>
+                <a href="index.html" class="text-xs font-bold text-gray-500 hover:underline">← Voltar ao Início</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let dadosCNPJ = {};
+
+        async function buscarCNPJ() {
+            const cnpj = document.getElementById('pCnpj').value.replace(/\D/g, '');
+            if(cnpj.length !== 14) return alert("Digite um CNPJ válido com 14 números.");
+            
+            try {
+                const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+                if(!res.ok) throw new Error();
+                const data = await res.json();
+                dadosCNPJ = data;
+                document.getElementById('pNome').value = data.nome_fantasia || data.razao_social;
+            } catch (e) { 
+                alert("CNPJ não encontrado na Receita Federal."); 
+            }
+        }
+
+        document.getElementById('formParceiro').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            if(!dadosCNPJ.cnpj) {
+                return alert("Por favor, clique em VALIDAR o CNPJ antes de cadastrar.");
+            }
+
+            const payload = {
+                cnpj: dadosCNPJ.cnpj,
+                razao_social: dadosCNPJ.razao_social || "",
+                nome_fantasia: document.getElementById('pNome').value,
+                email: document.getElementById('pEmail').value,
+                senha: document.getElementById('pSenha').value,
+                cidade: dadosCNPJ.municipio || "Não informada",
+                estado: dadosCNPJ.uf || "Não informada"
+            };
+
+            try {
+                const res = await fetch('http://127.0.0.1:8000/parceiros/registrar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    alert("Cadastro realizado com sucesso! Vamos te redirecionar para o Login.");
+                    // Manda ele direto pro login pra ele poder entrar na conta que acabou de criar!
+                    window.location.href = "dashboard-parceiro.html"; 
+                } else {
+                    alert("Erro: E-mail ou CNPJ já estão cadastrados.");
+                }
+            } catch (err) {
+                alert("Erro ao conectar com o servidor Python. Verifique se ele está rodando.");
+            }
+        };
+    </script>
+</body>
+</html>

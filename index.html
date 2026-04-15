@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onde Hoje - Encontre seu Rolê</title>
+    <link rel="icon" type="image/png" href="icon2.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="p-6 sticky top-0 z-40" style="background: rgba(224, 229, 236, 0.8); backdrop-filter: blur(15px);">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <div class="flex items-center gap-3">
+                <img src="icon.png" alt="Logo Onde Hoje" class="h-10 w-auto object-contain drop-shadow-md">
+                <h1 class="text-2xl font-black text-[#2d3748]">Onde <span class="text-[#DB5227]">Hoje</span></h1>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="abrirModalLocal()" class="neo-btn px-4 py-3 text-xs text-gray-500">📍 <span id="textoLocal">Buscando...</span></button>
+                <button onclick="location.href='dashboard-parceiro.html'" class="neo-btn px-5 py-3 text-xs"> Sou Parceiro </button>
+                <button onclick="abrirModalSugerir()" class="neo-btn neo-btn-accent px-5 py-3 text-sm"> Sugerir Rolê + </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-10 w-full flex-1">
+        <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </main>
+
+    <footer class="mt-auto p-8 text-center neo-box mx-4 mb-4">
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">© 2026 Onde Hoje</p>
+        <div class="flex justify-center gap-6 mt-4">
+            <a href="#" class="font-bold text-gray-600 hover:text-[#DB5227]">Instagram</a>
+            <a href="parceiros.html" class="font-bold text-[#DB5227]">Divulgue seu Rolê (Cadastre-se)</a>
+        </div>
+    </footer>
+
+    <div id="modalLocal" class="hidden fixed inset-0 modal-overlay z-50 flex justify-center items-center p-4">
+        <div class="neo-box p-8 w-full max-w-sm relative">
+            <button onclick="fecharModalLocal()" class="absolute top-4 right-4 font-black text-gray-400">X</button>
+            <h3 class="font-black text-xl mb-6">Onde você está?</h3>
+            <select id="selEstado" class="neo-input mb-4"></select>
+            <select id="selCidade" class="neo-input mb-6" disabled></select>
+            <button onclick="salvarLocal()" class="neo-btn neo-btn-accent w-full py-4 text-lg">Atualizar Rolês</button>
+        </div>
+    </div>
+
+    <div id="modalSugerir" class="hidden fixed inset-0 modal-overlay z-50 flex justify-center items-center p-4">
+        <div class="neo-box w-full max-w-md p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="fecharModalSugerir()" class="absolute top-5 right-5 text-gray-400 font-black text-xl">X</button>
+            <h2 class="text-2xl font-black mb-6">Sugerir Rolê</h2>
+            <form id="formSugerir" class="space-y-4">
+                <input type="text" id="modTitle" placeholder="Nome do Rolê" required class="neo-input">
+                <input type="text" id="modVenue" placeholder="Local (Ex: Bar do Zé)" required class="neo-input">
+                <div class="flex gap-2">
+                    <select id="modEstado" required class="neo-input w-1/3 text-xs"></select>
+                    <select id="modCidade" required disabled class="neo-input w-2/3 text-xs"></select>
+                </div>
+                <select id="modCategory" required class="neo-input w-full text-xs"></select>
+                
+                <div class="neo-box p-6 text-center cursor-pointer relative" style="box-shadow: var(--neo-inset);">
+                    <input type="file" id="modImageFile" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImagem(this)">
+                    <div id="uploadPlaceholder" class="text-sm font-bold text-gray-500">📸 Carregar foto</div>
+                    <img id="previewImg" class="hidden mt-2 rounded-xl h-32 w-full object-cover">
+                </div>
+                
+                <p class="text-[10px] text-center font-bold text-gray-400 uppercase">OU</p>
+                <input type="url" id="modImageLink" placeholder="Cole o link da foto" class="neo-input">
+                <textarea id="modDesc" placeholder="Descrição (Opcional)" class="neo-input h-20"></textarea>
+                <input type="text" id="modLink" placeholder="Link de Ingresso (Opcional)" class="neo-input">
+                <button type="submit" class="neo-btn neo-btn-accent w-full py-4 text-lg mt-2">Enviar Sugestão</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalDetalhes" class="hidden fixed inset-0 modal-overlay z-50 flex justify-center items-center p-4">
+        <div class="neo-box w-full max-w-md relative overflow-hidden max-h-[90vh] overflow-y-auto">
+            <button onclick="fecharModalDetalhes()" class="absolute top-4 right-4 bg-white/80 backdrop-blur text-black rounded-full w-10 h-10 font-black shadow-lg z-20">X</button>
+            <img id="detalheImagem" src="" class="w-full h-64 object-cover">
+            <div class="p-8">
+                <span id="detalheCategoria" class="text-[10px] font-black text-[#DB5227] uppercase tracking-widest"></span>
+                <h2 id="detalheTitulo" class="text-3xl font-black mb-2 text-[#2d3748]"></h2>
+                <div class="flex gap-2 mb-4"><span id="detalheCidade" class="text-gray-500 text-xs font-bold px-3 py-1 bg-gray-100 rounded-lg"></span></div>
+                <p id="detalheDesc" class="text-gray-600 text-sm mb-6 leading-relaxed"></p>
+                <a id="btnComprar" href="#" target="_blank" class="neo-btn neo-btn-accent w-full py-4 text-center mb-6">Ingressos</a>
+                
+                <p class="text-[10px] font-black uppercase text-gray-400 mb-4 text-center tracking-widest">Compartilhar</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="share('whatsapp')" class="neo-btn share-btn text-green-500"><svg viewBox="0 0 24 24"><path d="M12.031 21c-1.636 0-3.23-.435-4.636-1.261L3 21l1.3-4.32a9 9 0 1 1 7.731 4.32zm.006-16.5a7.5 7.5 0 1 0 7.5 7.5 7.508 7.508 0 0 0-7.5-7.5zm4.28 10.45c-.234-.117-1.385-.683-1.6-.762-.215-.08-.372-.117-.528.117-.156.234-.606.762-.743.918-.137.156-.274.175-.508.058a6.388 6.388 0 0 1-1.879-1.16 7.025 7.025 0 0 1-1.3-1.623c-.137-.234-.015-.36.102-.477.105-.105.234-.273.351-.41a1.536 1.536 0 0 0 .156-.234.425.425 0 0 0-.02-.41c-.058-.117-.528-1.272-.723-1.741-.19-.46-.384-.398-.528-.405-.137-.007-.294-.007-.45-.007a.86.86 0 0 0-.626.293c-.215.234-.821.802-.821 1.956s.84 2.268.957 2.424c.117.156 1.653 2.523 4.004 3.48 1.57.64 2.158.683 2.96.565.908-.134 1.385-.683 1.58-1.346.195-.664.195-1.233.137-1.346-.058-.117-.215-.175-.45-.293z"/></svg></button>
+                    <button onclick="share('facebook')" class="neo-btn share-btn text-blue-600"><svg viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5v-4C17.2 1.45 15.9 1 14 1c-3.1 0-5 1.92-5 5v3.5H6.5v4H9v10h5v-10z"/></svg></button>
+                    <button onclick="share('twitter')" class="neo-btn share-btn text-gray-800"><svg viewBox="0 0 24 24"><path d="M22 5.8a8.5 8.5 0 0 1-2.36.65 4.05 4.05 0 0 0 1.8-2.27 8.2 8.2 0 0 1-2.6 1 4.1 4.1 0 0 0-7 3.75A11.65 11.65 0 0 1 3.4 4.65a4.1 4.1 0 0 0 1.27 5.48 4.1 4.1 0 0 1-1.86-.51v.05a4.1 4.1 0 0 0 3.3 4 4.05 4.05 0 0 1-1.85.07 4.1 4.1 0 0 0 3.83 2.85A8.25 8.25 0 0 1 2 18.3a11.6 11.6 0 0 0 6.3 1.85c7.56 0 11.7-6.26 11.7-11.7v-.53A8.2 8.2 0 0 0 22 5.8z"/></svg></button>
+                    <button onclick="share('link')" class="neo-btn share-btn text-gray-500"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
