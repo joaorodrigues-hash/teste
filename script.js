@@ -1,4 +1,4 @@
-const API = "https://ondehoje-api.onrender.com"; // Ex: https://ondehoje-api.onrender.com
+const API = "https://ondehoje-api.onrender.com";
 
 let listaDeRoles = [];
 let imagemBase64 = ""; 
